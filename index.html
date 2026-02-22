@@ -414,41 +414,51 @@ canvas.chart { width:100% !important; }
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:#e5d5d5; border-radius:3px; }
 
-@media(max-width:768px) {
-  .sidebar { 
-    width:100%; height:60px; 
-    flex-direction:row; 
-    position:fixed; bottom:0; top:auto;
-    z-index:300;
-    overflow-x:auto;
-    overflow-y:hidden;
+@media only screen and (max-width:768px) {
+  /* OCULTAR SIDEBAR COMPLETAMENTE */
+  .sidebar { display:none !important; }
+  
+  /* MAIN OCUPA TODO */
+  .main { margin-left:0 !important; }
+  
+  /* TOPBAR COMPACTO */
+  .topbar { padding:0 0.75rem; height:50px; }
+  .topbar-title { font-size:0.85rem !important; }
+  
+  /* GRIDS A 1 COLUMNA */
+  .two-col, .three-col { grid-template-columns:1fr !important; }
+  .stats-row { grid-template-columns:repeat(2,1fr) !important; }
+  .grado-grid { grid-template-columns:1fr !important; }
+  .qr-grid { grid-template-columns:repeat(2,1fr) !important; }
+  
+  /* CONTENT */
+  .content { padding:1rem !important; padding-bottom:70px !important; }
+  
+  /* SCAN */
+  .scan-hero { padding:1.25rem !important; }
+  
+  /* MENU INFERIOR FLOTANTE */
+  .menu-movil {
+    display:flex !important;
+    position:fixed;
+    bottom:0; left:0; right:0;
+    background:var(--guinda-dark);
+    border-top:2px solid var(--dorado);
+    z-index:999;
+    height:60px;
   }
-  .sidebar-top, .profesor-box, .nav-section, .sidebar-footer { display:none !important; }
-  .sidebar-nav { 
-    display:flex; flex-direction:row; 
-    padding:0; align-items:center;
-    width:100%;
-  }
-  .nav-item { 
-    flex-direction:column; 
-    padding:0.4rem 0.75rem; 
-    border-left:none !important;
+  .menu-movil-item {
+    flex:1; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    color:rgba(255,255,255,0.6);
+    font-size:0.55rem; font-weight:700;
+    cursor:pointer; gap:2px;
     border-top:3px solid transparent;
-    font-size:0.6rem; gap:2px;
-    flex:1; justify-content:center; align-items:center;
-    min-width:50px;
-    margin-right:0;
-    border-radius:0;
+    transition:all 0.2s;
+    padding:0.25rem 0;
   }
-  .nav-item.active { border-top-color:var(--dorado); border-left:none; }
-  .nav-icon { font-size:1.3rem; width:auto; }
-  .main { margin-left:0; margin-bottom:60px; }
-  .two-col,.three-col { grid-template-columns:1fr; }
-  .stats-row { grid-template-columns:repeat(2,1fr); }
-  .topbar { padding:0 1rem; }
-  .grado-grid { grid-template-columns:1fr; }
-  .scan-hero { padding:1.25rem; }
-  .qr-grid { grid-template-columns:repeat(2,1fr); }
+  .menu-movil-item.active { color:white; border-top-color:var(--dorado); background:rgba(255,255,255,0.08); }
+  .menu-movil-item .mico { font-size:1.3rem; }
 }
 </style>
 </head>
@@ -1349,6 +1359,45 @@ function toast(msg,tipo='ok'){
 // URL QR
 const urlP=new URLSearchParams(location.search);
 if(urlP.get('cod')) registrar(urlP.get('cod'));
+</script>
+
+<!-- MENÚ MÓVIL INFERIOR -->
+<div class="menu-movil" id="menu-movil" style="display:none">
+  <div class="menu-movil-item active" onclick="gotoM('dashboard',this)">
+    <span class="mico">📊</span><span>Panel</span>
+  </div>
+  <div class="menu-movil-item" onclick="gotoM('seleccionar',this)">
+    <span class="mico">🏫</span><span>Salón</span>
+  </div>
+  <div class="menu-movil-item" onclick="gotoM('escanear',this)">
+    <span class="mico">📷</span><span>Escanear</span>
+  </div>
+  <div class="menu-movil-item" onclick="gotoM('generar',this)">
+    <span class="mico">🔑</span><span>QR</span>
+  </div>
+  <div class="menu-movil-item" onclick="gotoM('profesores',this)">
+    <span class="mico">👨‍🏫</span><span>Docentes</span>
+  </div>
+  <div class="menu-movil-item" onclick="gotoM('reportes',this)">
+    <span class="mico">📈</span><span>Gráficos</span>
+  </div>
+</div>
+
+<script>
+// Detectar móvil y mostrar menú inferior
+if(window.innerWidth <= 768) {
+  document.getElementById('menu-movil').style.display = 'flex';
+}
+window.addEventListener('resize', function(){
+  document.getElementById('menu-movil').style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+});
+
+function gotoM(tab, el) {
+  goto(tab, null);
+  document.querySelectorAll('.menu-movil-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  window.scrollTo(0,0);
+}
 </script>
 </body>
 </html>
